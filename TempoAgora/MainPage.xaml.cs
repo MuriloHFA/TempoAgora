@@ -1,24 +1,47 @@
-﻿namespace TempoAgora
+﻿using TempoAgora.Models;
+using TempoAgora.Services;
+
+namespace TempoAgora
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+
+        Tempo lst_Legal;
 
         public MainPage()
         {
             InitializeComponent();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        private async void btn_previsao_Clicked(object sender, EventArgs e)
         {
-            count++;
+            try
+            {
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
+                if (!string.IsNullOrEmpty(ent_cidade.Text))
+                {
 
-            SemanticScreenReader.Announce(CounterBtn.Text);
+                    Tempo? t = await DataService.GetWeather(ent_cidade.Text);
+
+                    if (t != null)
+                    {
+
+                        lst_Legal = t;
+                        BindingContext = lst_Legal;
+
+                        return;
+
+                    }
+
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Erro!", ex.Message, "OK!");
+            }
         }
     }
 
